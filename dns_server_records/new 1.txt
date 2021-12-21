@@ -1,1 +1,0 @@
-mate.pal.sansy.pansy IP = 66.66.66.66 TTL = 210

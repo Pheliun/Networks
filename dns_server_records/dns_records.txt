@@ -1,1 +1,2 @@
-mate.pal.sansy.pansy IP = 66.66.66.66 TTL = 210
+qname;ip;ttl
+mate.pal.sansy.pansy.;66.66.66.66;210
