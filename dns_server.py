@@ -2,7 +2,7 @@ from scapy.layers.dns import *
 from scapy.sendrecv import sniff
 import socket
 
-
+ip = str(socket.gethostbyname(socket.gethostname()))
 # filters the requirements needed for this DNS Server
 # input: packet
 # output: true or false
@@ -37,7 +37,7 @@ def exists(packet):
         return False
 
 
-# sends the properties in the database by specifying it(for now only IP)
+# sends the properties in the database by specifying it
 # if no type was inputted then print all properties
 # input: packet, type of property
 # output: the property wanted
@@ -53,6 +53,16 @@ def typeof_properties(packet, type=None):
                 except:
                     continue
 
+        elif type.upper() == 'NA':
+
+            for line in file:
+                try:
+                    if packet[DNSQR].qname.decode() in line:
+                        return line.split(';')[1]
+                except:
+                    pass
+
+
         return None  # exeptional case (I dont even know if that case is possible)
 
 
@@ -64,24 +74,27 @@ def send_packet(packet):
                         UDP(dport=packet[IP].sport, sport=53) /
                         DNS(id=packet[DNS].id, qr=1, qd=packet[DNSQR], an=
                         DNSRR(rrname=packet[DNSQR].qname.decode(),
-                              type=packet[DNSQR].qtype.decode())))
+                              type=packet[DNSQR].qtype)))
 
-    if exists(packet):
+    if packet[DNSQR].qtype == 1:
+        ans_packet.show()
+        print('-------------------------------------------------')
+        ans_packet[DNSRR].rdata = str(typeof_properties(packet, 'ip'))
 
-        if packet[DNSQR].qtype == 1:
-            ans_packet = DNS(rdata = typeof_properties(packet, 'ip'))
-
-        elif packet[DNSQR].qtype == 12:
-            ans_packet = DNS(rdata = "Ben-PC DNS Server")
-
+        ans_packet.show()
+        print(str(typeof_properties(packet, 'ip')))
+    elif packet[DNSQR].qtype == 12:
+        ans_packet = DNS(rdata="Ben-PC DNS Server")
 
     else:
+        pass
 
 
 
 
 
 def main():
+    print(ip)
     print("sniffing...")
     packet = sniff(count=1, lfilter=filter)[0]  # sniffing
     print("sniffing complete.")

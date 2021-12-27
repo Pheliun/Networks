@@ -1,2 +1,3 @@
-qname;ip;ttl
-mate.pal.sansy.pansy.;66.66.66.66;210
+qname;ip
+Ben-PC DNS Server;10.0.0.80
+mate.pal.sansy.pansy.;66.66.66.66
